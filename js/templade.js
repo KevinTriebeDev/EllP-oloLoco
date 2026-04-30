@@ -1,13 +1,13 @@
-function htmltemplade(){
-    return `
-    <div class="container">
-        <div class="header">
-        </div>
+function htmltemplade() {
+  return `
         <div class="content">
-            <p>Willkommen bei EL-Pollo-Loco, dem besten Ort für leckeres Hähnchen!</p>
-            <p>Unsere Spezialität ist das knusprige, saftige Hähnchen, das mit einer geheimen Gewürzmischung zubereitet wird.</p>
-            <p>Besuchen Sie uns und genießen Sie unsere köstlichen Gerichte!</p>
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="720" height="480"></canvas>
+                <div class="menu-buttons">
+                    <button class="menu-button">Start</button>
+                    <button class="menu-button">Optionen</button>
+                </div>
+            </div>
         </div>
-    </div>
-    `;  
+    `;
 }
