@@ -40,7 +40,12 @@ const anim = {
     3,
     "_w.png",
   ),
+  chickenDead: ["assets/img/3_enemies_chicken/chicken_normal/2_dead/dead.png"],
+  chickDead: ["assets/img/3_enemies_chicken/chicken_small/2_dead/dead.png"],
   bossWalk: range("assets/img/4_enemie_boss_chicken/1_walk/G", 1, 4),
+  bossAttack: range("assets/img/4_enemie_boss_chicken/3_attack/G", 13, 20),
+  bossHurt: range("assets/img/4_enemie_boss_chicken/4_hurt/G", 21, 23),
+  bossDead: range("assets/img/4_enemie_boss_chicken/5_dead/G", 24, 26),
   bottleRot: range(
     "assets/img/6_salsa_bottle/bottle_rotation/",
     1,
@@ -70,6 +75,12 @@ const icons = {
   coin: "assets/img/7_statusbars/3_icons/icon_coin.png",
   bottle: "assets/img/7_statusbars/3_icons/icon_salsa_bottle.png",
   boss: "assets/img/7_statusbars/3_icons/icon_health_endboss.png",
+};
+
+const screens = {
+  start: "assets/img/9_intro_outro_screens/start/startscreen_1.png",
+  won: "assets/img/You won, you lost/You won A.png",
+  lost: "assets/img/9_intro_outro_screens/game_over/game over.png",
 };
 
 document.addEventListener("DOMContentLoaded", init);
@@ -140,7 +151,12 @@ function preloadImages() {
     ...anim.pepeHurt,
     ...anim.chickenWalk,
     ...anim.chickWalk,
+    ...anim.chickenDead,
+    ...anim.chickDead,
     ...anim.bossWalk,
+    ...anim.bossAttack,
+    ...anim.bossHurt,
+    ...anim.bossDead,
     ...anim.bottleRot,
     ...anim.bottleSplash,
     "assets/img/8_coin/coin_1.png",
@@ -148,6 +164,9 @@ function preloadImages() {
     "assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png",
     "assets/img/6_salsa_bottle/2_salsa_bottle_on_ground.png",
     "assets/img/6_salsa_bottle/salsa_bottle.png",
+    screens.start,
+    screens.won,
+    screens.lost,
   ];
   allPaths.forEach((path) => getImage(path));
 }
@@ -190,9 +209,7 @@ function showHomeScreen() {
 }
 
 function drawHome() {
-  drawBackgroundLayers();
-  drawOverlayText("El Pollo Loco", 58);
-  drawOverlayText("Druecke Start", 98);
+  drawScreenImage(screens.start);
 }
 
 function startGame() {
@@ -233,6 +250,11 @@ function resetWorld() {
     h: 170,
     hp: 100,
     frame: 0,
+    mode: "walk",
+    hurtUntil: 0,
+    attackUntil: 0,
+    deadAt: 0,
+    deadFinished: false,
   };
   state.enemies = createEnemies(floor);
   state.coins = createCoins(floor);
@@ -272,6 +294,7 @@ function spawnEnemy(type, x, floor) {
     attackUntil: 0,
     nextAttackAt: 0,
     attackDir: 1,
+    deadUntil: 0,
   };
 }
 
@@ -439,8 +462,12 @@ function updatePlayerAnimation(dt) {
 
 function updateEnemies(dt) {
   const now = performance.now();
+  updateBossAI(dt, now);
   state.enemies.forEach((enemy) => {
-    if (!enemy.alive) return;
+    if (!enemy.alive) {
+      if (now > enemy.deadUntil) enemy.hidden = true;
+      return;
+    }
     updateEnemyAttack(enemy, now);
     const attacking = enemy.attackUntil > now;
     const activeDir = attacking ? enemy.attackDir : enemy.patrolDir;
@@ -457,7 +484,38 @@ function updateEnemies(dt) {
     enemy.dir = attacking ? activeDir : enemy.patrolDir;
     enemy.frame += dt * 8;
   });
+}
+
+function updateBossAI(dt, now) {
+  if (state.boss.deadFinished) return;
+  if (state.boss.hp <= 0) {
+    state.boss.mode = "dead";
+    state.boss.frame += dt * 6;
+    if (!state.boss.deadAt) state.boss.deadAt = now;
+    if (state.boss.frame >= anim.bossDead.length - 0.1) {
+      state.boss.deadFinished = true;
+      endGame(true);
+    }
+    return;
+  }
+  const distance = Math.abs(state.player.x - state.boss.x);
+  if (now < state.boss.hurtUntil) {
+    state.boss.mode = "hurt";
+    state.boss.frame += dt * 8;
+    return;
+  }
+  if (distance < 180) {
+    state.boss.mode = "attack";
+    state.boss.attackUntil = now + 350;
+    state.boss.frame += dt * 10;
+    if (state.boss.x < state.player.x) state.boss.x += 70 * dt;
+    else state.boss.x -= 70 * dt;
+    return;
+  }
+  state.boss.mode = "walk";
   state.boss.frame += dt * 6;
+  if (state.boss.x < state.player.x) state.boss.x += 55 * dt;
+  else state.boss.x -= 55 * dt;
 }
 
 function updateEnemyAttack(enemy, now) {
@@ -528,12 +586,12 @@ function checkCollisions(now) {
 }
 
 function collideEnemy(enemy, now) {
-  if (!enemy.alive) return;
+  if (!enemy.alive || enemy.hidden) return;
   const p = hitbox(state.player, "player");
   const e = hitbox(enemy, "enemy");
   if (!isHit(p, e)) return;
   if (isStompHit(state.player, enemy)) {
-    enemy.alive = false;
+    killEnemy(enemy, now);
     state.player.vy = -310;
     return;
   }
@@ -541,31 +599,46 @@ function collideEnemy(enemy, now) {
 }
 
 function collideBoss(now) {
+  if (state.boss.hp <= 0) return;
   const p = hitbox(state.player, "player");
   const b = hitbox(state.boss, "boss");
   if (!isHit(p, b)) return;
   if (isStompHit(state.player, state.boss)) {
     state.boss.hp = Math.max(0, state.boss.hp - 8);
+    state.boss.hurtUntil = now + 420;
+    state.boss.frame = 0;
     state.player.vy = -330;
     return;
   }
-  hurtPlayer(now, 12);
+  const damage = state.boss.mode === "attack" ? 18 : 12;
+  hurtPlayer(now, damage);
 }
 
 function collideProjectiles() {
+  const now = performance.now();
   state.projectiles.forEach((bottle) => {
     if (!bottle.alive || bottle.splash) return;
     const shot = hitbox(bottle, "projectile");
     state.enemies.forEach((enemy) => {
-      if (!enemy.alive || !isHit(shot, hitbox(enemy, "enemy"))) return;
-      enemy.alive = false;
+      if (!enemy.alive || enemy.hidden || !isHit(shot, hitbox(enemy, "enemy")))
+        return;
+      killEnemy(enemy, now);
       startSplash(bottle);
     });
-    if (isHit(shot, hitbox(state.boss, "boss"))) {
+    if (state.boss.hp > 0 && isHit(shot, hitbox(state.boss, "boss"))) {
       state.boss.hp = Math.max(0, state.boss.hp - 10);
+      state.boss.hurtUntil = now + 420;
+      state.boss.frame = 0;
       startSplash(bottle);
     }
   });
+}
+
+function killEnemy(enemy, now) {
+  enemy.alive = false;
+  enemy.hidden = false;
+  enemy.deadUntil = now + 700;
+  state.player.bottles = Math.min(MAX_BOTTLES, state.player.bottles + 3);
 }
 
 function hurtPlayer(now, damage) {
@@ -658,15 +731,31 @@ function decorPath(type) {
 
 function drawEnemies() {
   state.enemies.forEach((enemy) => {
-    if (!enemy.alive) return;
-    const frames = enemy.type === "small" ? anim.chickWalk : anim.chickenWalk;
-    const flipX = enemy.type === "small" ? enemy.dir < 0 : enemy.dir > 0;
+    if (enemy.hidden) return;
+    const dead = !enemy.alive;
+    const frames = dead
+      ? enemy.type === "small"
+        ? anim.chickDead
+        : anim.chickenDead
+      : enemy.type === "small"
+        ? anim.chickWalk
+        : anim.chickenWalk;
+    const flipX = enemy.type === "small" ? enemy.dir > 0 : enemy.dir > 0;
     drawSprite(frames, enemy.frame, enemy, flipX);
   });
 }
 
 function drawBoss() {
-  drawSprite(anim.bossWalk, state.boss.frame, state.boss, false);
+  const frames = getBossFrames();
+  const faceLeft = state.boss.x > state.player.x;
+  drawSprite(frames, state.boss.frame, state.boss, faceLeft);
+}
+
+function getBossFrames() {
+  if (state.boss.mode === "dead") return anim.bossDead;
+  if (state.boss.mode === "hurt") return anim.bossHurt;
+  if (state.boss.mode === "attack") return anim.bossAttack;
+  return anim.bossWalk;
 }
 
 function drawPlayer() {
@@ -809,7 +898,21 @@ function endGame(won) {
   cancelAnimationFrame(rafId);
   byId("touchControls").classList.add("hidden");
   byId("endTitle").textContent = won ? "Gewonnen!" : "Verloren!";
+  byId("endScreen").style.backgroundImage =
+    `url("${won ? screens.won : screens.lost}")`;
+  byId("endScreen").style.backgroundColor = "transparent";
   byId("endScreen").classList.remove("hidden");
+}
+
+function drawScreenImage(path) {
+  const image = getImage(path);
+  if (!image.complete) {
+    drawBackgroundLayers();
+    drawOverlayText("El Pollo Loco", 58);
+    drawOverlayText("Druecke Start", 98);
+    return;
+  }
+  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 }
 
 function openOptions() {
