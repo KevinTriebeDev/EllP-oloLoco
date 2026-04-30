@@ -2,6 +2,7 @@ let canvas;
 let ctx;
 let rafId = 0;
 let lastTime = 0;
+const MAX_BOTTLES = 15;
 
 const state = {
   scene: "home",
@@ -264,11 +265,13 @@ function spawnEnemy(type, x, floor) {
     frame: 0,
     alive: true,
     dir: 1,
+    patrolDir: 1,
     speed: isSmall ? 90 : 65,
     minX: x - (isSmall ? 170 : 110),
     maxX: x + (isSmall ? 170 : 120),
     attackUntil: 0,
     nextAttackAt: 0,
+    attackDir: 1,
   };
 }
 
@@ -302,23 +305,9 @@ function coinAt(x, y) {
 }
 
 function createGroundBottles(floor) {
-  return [
-    bottleAt(380, floor),
-    bottleAt(500, floor),
-    bottleAt(650, floor),
-    bottleAt(980, floor),
-    bottleAt(1120, floor),
-    bottleAt(1320, floor),
-    bottleAt(1480, floor),
-    bottleAt(1710, floor),
-    bottleAt(1960, floor),
-    bottleAt(2140, floor),
-    bottleAt(2380, floor),
-    bottleAt(2590, floor),
-    bottleAt(2800, floor),
-    bottleAt(3040, floor),
-    bottleAt(3290, floor),
-  ];
+  const list = [];
+  for (let x = 320; x <= 3420; x += 165) list.push(bottleAt(x, floor));
+  return list;
 }
 
 function createDecorations(floor) {
@@ -453,16 +442,19 @@ function updateEnemies(dt) {
   state.enemies.forEach((enemy) => {
     if (!enemy.alive) return;
     updateEnemyAttack(enemy, now);
-    const speed = enemy.attackUntil > now ? enemy.speed * 2 : enemy.speed;
-    enemy.x += speed * enemy.dir * dt;
+    const attacking = enemy.attackUntil > now;
+    const activeDir = attacking ? enemy.attackDir : enemy.patrolDir;
+    const speed = attacking ? enemy.speed * 2 : enemy.speed;
+    enemy.x += speed * activeDir * dt;
     if (enemy.x <= enemy.minX) {
       enemy.x = enemy.minX;
-      enemy.dir = 1;
+      enemy.patrolDir = 1;
     }
     if (enemy.x >= enemy.maxX) {
       enemy.x = enemy.maxX;
-      enemy.dir = -1;
+      enemy.patrolDir = -1;
     }
+    enemy.dir = attacking ? activeDir : enemy.patrolDir;
     enemy.frame += dt * 8;
   });
   state.boss.frame += dt * 6;
@@ -475,7 +467,7 @@ function updateEnemyAttack(enemy, now) {
   if (distance > 240) return;
   enemy.attackUntil = now + 500;
   enemy.nextAttackAt = now + 1700;
-  enemy.dir = state.player.x > enemy.x ? 1 : -1;
+  enemy.attackDir = state.player.x > enemy.x ? 1 : -1;
 }
 
 function updateProjectiles(dt) {
@@ -523,7 +515,7 @@ function collectItems() {
     )
       return;
     bottle.taken = true;
-    state.player.bottles = Math.min(5, state.player.bottles + 1);
+    state.player.bottles = Math.min(MAX_BOTTLES, state.player.bottles + 1);
   });
 }
 
@@ -736,7 +728,7 @@ function drawFrameByIndex(paths, frame, x, y, w, h) {
 function drawStatusBars() {
   drawStatusBar("health", state.player.hp, 16, 14);
   drawStatusBar("coin", playerCoinsPercent(), 16, 48);
-  drawStatusBar("bottle", (state.player.bottles / 5) * 100, 16, 82);
+  drawStatusBar("bottle", (state.player.bottles / MAX_BOTTLES) * 100, 16, 82);
   drawBossStatusBar();
 }
 
