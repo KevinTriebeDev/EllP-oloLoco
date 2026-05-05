@@ -35,6 +35,19 @@ body {
   padding: 8px;
 }
 
+.game-title {
+  font-size: 36px;
+  font-weight: 900;
+  color: #3a1a00;
+  text-align: center;
+  text-shadow:
+    2px 2px 0 #ffc839,
+    4px 4px 0 rgba(0, 0, 0, 0.2);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  pointer-events: none;
+}
+
 .canvas-wrapper {
   position: relative;
   width: min(96vw, 720px);
@@ -188,6 +201,36 @@ body {
   border-color: rgba(20, 60, 120, 0.6);
 }
 
+.btn-arrow {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.btn-throw {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.arrow-right {
+  transform: rotate(0deg);
+}
+
+.arrow-left {
+  transform: rotate(180deg);
+}
+
+.arrow-up {
+  transform: rotate(-90deg);
+}
+
 .end-screen {
   position: absolute;
   inset: 0;
@@ -244,6 +287,10 @@ body {
   }
 
   .topbar {
+    display: none;
+  }
+
+  .game-title {
     display: none;
   }
 

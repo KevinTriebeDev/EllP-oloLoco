@@ -7,6 +7,7 @@ function renderTemplate() {
     </header>
 
     <main class="content">
+      <h1 class="game-title">EL Pollo Loco</h1>
       <div class="canvas-wrapper">
         <canvas id="canvas" width="720" height="480" style="display:block"></canvas>
 
@@ -25,12 +26,12 @@ function renderTemplate() {
 
         <div id="touchControls" class="touch-controls">
           <div class="touch-group touch-group--left">
-            <button data-key="ArrowLeft" class="touch-button" aria-label="Links">&#x2B05;&#xFE0F;</button>
-            <button data-key="ArrowRight" class="touch-button" aria-label="Rechts">&#x27A1;&#xFE0F;</button>
+            <button data-key="ArrowLeft" class="touch-button" aria-label="Links"><img src="assets/img/rechter-pfeil.png" class="btn-arrow arrow-left" draggable="false"></button>
+            <button data-key="ArrowRight" class="touch-button" aria-label="Rechts"><img src="assets/img/rechter-pfeil.png" class="btn-arrow arrow-right" draggable="false"></button>
           </div>
           <div class="touch-group touch-group--right">
-            <button data-key="ArrowUp" class="touch-button" aria-label="Sprung">&#x2B06;&#xFE0F;</button>
-            <button data-key="KeyD" class="touch-button touch-button--bottle" aria-label="Flasche werfen">&#x1F376;</button>
+            <button data-key="ArrowUp" class="touch-button" aria-label="Sprung"><img src="assets/img/rechter-pfeil.png" class="btn-arrow arrow-up" draggable="false"></button>
+            <button data-key="KeyD" class="touch-button touch-button--bottle" aria-label="Flasche werfen"><img src="assets/img/bier.png" class="btn-throw" draggable="false"></button>
           </div>
         </div>
       </div>
