@@ -142,15 +142,50 @@ body {
   display: none;
 }
 
+.touch-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 .touch-button {
-  border: 2px solid #1f1304;
-  border-radius: 999px;
-  padding: 9px 12px;
-  background: linear-gradient(to bottom, #ffe58a, #ffc839);
-  font-weight: 700;
+  width: 58px;
+  height: 58px;
+  border: 2px solid rgba(31, 19, 4, 0.7);
+  border-radius: 50%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 229, 138, 0.85),
+    rgba(255, 200, 57, 0.85)
+  );
+  backdrop-filter: blur(4px);
+  font-size: 22px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: manipulation;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  transition:
+    background 0.1s,
+    transform 0.1s;
+}
+
+.touch-button:active {
+  background: linear-gradient(to bottom, #ffd84a, #e6a800);
+  transform: scale(0.93);
+}
+
+.touch-button--bottle {
+  background: linear-gradient(
+    to bottom,
+    rgba(180, 220, 255, 0.85),
+    rgba(100, 170, 255, 0.85)
+  );
+  border-color: rgba(20, 60, 120, 0.6);
 }
 
 .end-screen {
@@ -182,13 +217,74 @@ body {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 10px;
+    bottom: 12px;
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 16px;
+    z-index: 5;
+  }
+
+  .touch-button {
+    width: 54px;
+    height: 54px;
+    font-size: 20px;
   }
 
   .menu-button {
     font-size: 16px;
+  }
+}
+
+/* Landscape on mobile / tablet → fullscreen canvas */
+@media (max-width: 1024px) and (orientation: landscape) {
+  body {
+    background: #000;
+    overflow: hidden;
+  }
+
+  .topbar {
+    display: none;
+  }
+
+  .content {
+    padding: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .canvas-wrapper {
+    width: 100vw;
+    width: 100dvw;
+    max-width: none;
+  }
+
+  #canvas {
+    width: 100vw;
+    width: 100dvw;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+    display: block;
+  }
+
+  .touch-controls {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 20px;
+    z-index: 10;
+  }
+
+  .touch-button {
+    width: 60px;
+    height: 60px;
+    font-size: 22px;
   }
 }
