@@ -1,4 +1,5 @@
 class Player {
+  /** Creates the player with default values at floor level. */
   constructor(floor) {
     this.x = 80;
     this.y = floor - 140;
@@ -17,6 +18,7 @@ class Player {
 }
 
 class Enemy {
+  /** Creates an enemy instance from type and spawn position. */
   constructor(type, x, floor) {
     const small = type === "small";
     this.type = type;
@@ -34,6 +36,7 @@ class Enemy {
 }
 
 class Boss {
+  /** Creates the endboss with combat and animation state. */
   constructor(floor) {
     this.x = WORLD_WIDTH - 260;
     this.spawnX = WORLD_WIDTH - 260;
@@ -52,6 +55,7 @@ class Boss {
 }
 
 class Coin {
+  /** Creates a coin pickup at the given world position. */
   constructor(x, y) {
     this.x = x;
     this.y = y;
@@ -63,6 +67,7 @@ class Coin {
 }
 
 class GroundBottle {
+  /** Creates a ground bottle pickup near the floor. */
   constructor(x, floor) {
     this.x = x;
     this.y = floor - 64;
@@ -74,6 +79,7 @@ class GroundBottle {
 }
 
 class Projectile {
+  /** Creates a bottle projectile that moves in player direction. */
   constructor(player) {
     const dir = player.dir;
     this.x = player.x + (dir === 1 ? player.w - 10 : -10);

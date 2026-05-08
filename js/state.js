@@ -13,10 +13,12 @@ const state = {
   projectiles: [],
 };
 
+/** Returns the ground y-position for current canvas size. */
 function groundY() {
   return canvas.height - 42;
 }
 
+/** Resets all world entities and runtime values for a new run. */
 function resetWorld() {
   const floor = groundY();
   state.cameraX = 0;
@@ -34,6 +36,7 @@ function resetWorld() {
   state.bottles = createGroundBottles(floor);
 }
 
+/** Creates pickup bottles along the level floor. */
 function createGroundBottles(floor) {
   const list = [];
   for (let x = 320; x <= 3420; x += 165) list.push(new GroundBottle(x, floor));

@@ -1,3 +1,4 @@
+/** Draws one full frame with all render passes. */
 function drawFrame() {
   drawBackgroundLayers();
   drawWorldItems();
@@ -8,6 +9,7 @@ function drawFrame() {
   drawStatusBars();
 }
 
+/** Draws all parallax background layers in order. */
 function drawBackgroundLayers() {
   drawLayerSet([BG.air], 0);
   drawAlternatingLayer(BG.cloud1, BG.cloud2, 0.2);
@@ -16,6 +18,7 @@ function drawBackgroundLayers() {
   drawAlternatingLayer(BG.first1, BG.first2, 1);
 }
 
+/** Draws a repeating two-image parallax layer. */
 function drawAlternatingLayer(path1, path2, factor) {
   const imgs = [getImage(path1), getImage(path2)].filter(
     (i) => i.complete && i.naturalWidth,
@@ -37,6 +40,7 @@ function drawAlternatingLayer(path1, path2, factor) {
   }
 }
 
+/** Draws a repeating layer set using camera parallax. */
 function drawLayerSet(paths, factor) {
   const imgs = paths.map(getImage).filter((i) => i.complete && i.naturalWidth);
   if (!imgs.length) return;
@@ -56,15 +60,18 @@ function drawLayerSet(paths, factor) {
   }
 }
 
+/** Calculates tile width that scales image to canvas height. */
 function calcTileW(img) {
   return Math.round(img.naturalWidth * (canvas.height / img.naturalHeight));
 }
 
+/** Draws collectible world items like coins and bottles. */
 function drawWorldItems() {
   state.coins.forEach(drawCoin);
   state.bottles.forEach(drawGroundBottle);
 }
 
+/** Draws a single animated coin if not collected. */
 function drawCoin(coin) {
   if (coin.taken) return;
   coin.frame += 0.15;
@@ -77,6 +84,7 @@ function drawCoin(coin) {
   ctx.drawImage(img, coin.x - state.cameraX, coin.y, coin.w, coin.h);
 }
 
+/** Draws a single ground bottle pickup if not collected. */
 function drawGroundBottle(bottle) {
   if (bottle.taken) return;
   const path =
@@ -88,6 +96,7 @@ function drawGroundBottle(bottle) {
   ctx.drawImage(img, bottle.x - state.cameraX, bottle.y, bottle.w, bottle.h);
 }
 
+/** Draws all enemies with alive/dead animation frames. */
 function drawEnemies() {
   state.enemies.forEach((enemy) => {
     if (enemy.hidden) return;
@@ -103,12 +112,14 @@ function drawEnemies() {
   });
 }
 
+/** Draws the boss with current mode and facing direction. */
 function drawBoss() {
   const frames = getBossFrames();
   const faceLeft = state.boss.x < state.player.x;
   drawSprite(frames, state.boss.frame, state.boss, faceLeft);
 }
 
+/** Returns the active animation frame list for boss mode. */
 function getBossFrames() {
   if (state.boss.mode === "dead") return ANIM.bossDead;
   if (state.boss.mode === "hurt") return ANIM.bossHurt;
@@ -116,20 +127,23 @@ function getBossFrames() {
   return ANIM.bossWalk;
 }
 
+/** Draws player sprite with current animation and direction. */
 function drawPlayer() {
   const frames = getPlayerFrames();
   drawSprite(frames, state.player.frame, state.player, state.player.dir < 0);
 }
 
+/** Selects player animation frames for current state. */
 function getPlayerFrames() {
   const now = performance.now();
   if (now < state.player.hurtUntil) return ANIM.pepeHurt;
   if (Math.abs(state.player.vy) > 40) return ANIM.pepeJump;
   if (Math.abs(state.player.vx) > 5) return ANIM.pepeWalk;
-  if (now - state.player.idleSince >= 3000) return ANIM.pepeSleep;
+  if (now - state.player.idleSince >= 15000) return ANIM.pepeSleep;
   return ANIM.pepeIdle;
 }
 
+/** Draws all projectiles including splash animations. */
 function drawProjectiles() {
   state.projectiles.forEach((bottle) => {
     const x = bottle.x - state.cameraX;
@@ -148,6 +162,7 @@ function drawProjectiles() {
   });
 }
 
+/** Draws one sprite frame and flips horizontally if needed. */
 function drawSprite(paths, frame, entity, flipX) {
   const x = entity.x - state.cameraX;
   const idx = Math.floor(frame) % paths.length;
@@ -163,11 +178,13 @@ function drawSprite(paths, frame, entity, flipX) {
   ctx.restore();
 }
 
+/** Draws one animation frame at a fixed position and size. */
 function drawFrameAt(paths, frame, x, y, w, h) {
   const img = getImage(paths[Math.floor(frame) % paths.length]);
   if (img.complete) ctx.drawImage(img, x, y, w, h);
 }
 
+/** Draws player and boss status bars. */
 function drawStatusBars() {
   drawStatusBar("health", state.player.hp, 16, 14);
   drawStatusBar("coin", playerCoinsPercent(), 16, 48);
@@ -175,26 +192,31 @@ function drawStatusBars() {
   if (state.boss.activated) drawBossStatusBar();
 }
 
+/** Draws one player status bar with nearest step value. */
 function drawStatusBar(kind, value, x, y) {
   const step = nearestBarValue(value);
   const img = getImage(STATUS_PATHS[kind](step));
   if (img.complete) ctx.drawImage(img, x, y, 170, 38);
 }
 
+/** Draws endboss health bar once boss is active. */
 function drawBossStatusBar() {
   const step = nearestBarValue(state.boss.hp);
   const img = getImage(STATUS_PATHS.boss(step));
   if (img.complete) ctx.drawImage(img, canvas.width - 196, 14, 170, 38);
 }
 
+/** Rounds arbitrary percentage to bar step values. */
 function nearestBarValue(value) {
   return clamp(Math.round(clamp(value, 0, 100) / 20) * 20, 0, 100);
 }
 
+/** Converts collected coin count to a percentage value. */
 function playerCoinsPercent() {
   return (state.player.coins / (state.coins.length || 1)) * 100;
 }
 
+/** Draws start screen image or fallback overlay text. */
 function drawScreenImage(path) {
   const img = getImage(path);
   if (!img.complete) {
@@ -212,10 +234,12 @@ function drawScreenImage(path) {
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 }
 
+/** Draws the home/start screen. */
 function drawHome() {
   drawScreenImage(SCREENS.start);
 }
 
+/** Draws centered overlay text on top of the scene. */
 function drawOverlayText(text, y) {
   ctx.fillStyle = "rgba(0,0,0,0.55)";
   ctx.fillRect(160, y - 34, 400, 44);

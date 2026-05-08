@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", renderTemplate);
 
+/** Renders the complete game UI markup into the body. */
 function renderTemplate() {
   document.body.innerHTML = `
     <header class="topbar">
