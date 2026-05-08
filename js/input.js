@@ -1,15 +1,21 @@
-/** Binds keyboard events to game key state. */
+/**
+ * - Binds keyboard events to game key state.
+ */
 function bindKeyboard() {
   window.addEventListener("keydown", (e) => (state.keys[e.code] = true));
   window.addEventListener("keyup", (e) => (state.keys[e.code] = false));
 }
 
-/** Binds touch controls for all touch buttons. */
+/**
+ * - Binds touch controls for all touch buttons.
+ */
 function bindTouch() {
   document.querySelectorAll(".touch-button").forEach(addTouchEvents);
 }
 
-/** Attaches mouse and touch events for one control button. */
+/**
+ * - Attaches mouse and touch events for one control button.
+ */
 function addTouchEvents(button) {
   const key = button.dataset.key;
   button.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -24,13 +30,17 @@ function addTouchEvents(button) {
   button.addEventListener("mouseleave", () => (state.keys[key] = false));
 }
 
-/** Updates key state for touch start and touch end events. */
+/**
+ * - Updates key state for touch start and touch end events.
+ */
 function setTouchKey(e, key, pressed) {
   e.preventDefault();
   state.keys[key] = pressed;
 }
 
-/** Watches orientation and size changes for overlay and canvas updates. */
+/**
+ * - Watches orientation and size changes for overlay and canvas updates.
+ */
 function setupOrientationCheck() {
   const watcher = () => {
     setOrientationMessage();
@@ -41,14 +51,18 @@ function setupOrientationCheck() {
   window.addEventListener("orientationchange", watcher);
 }
 
-/** Toggles rotate-device message in portrait mobile mode. */
+/**
+ * - Toggles rotate-device message in portrait mobile mode.
+ */
 function setOrientationMessage() {
   const mobile = window.innerWidth <= 1024;
   const portrait = window.innerHeight > window.innerWidth;
   byId("orientationOverlay").classList.toggle("hidden", !(mobile && portrait));
 }
 
-/** Resizes canvas based on mobile landscape/fullscreen rules. */
+/**
+ * - Resizes canvas based on mobile landscape/fullscreen rules.
+ */
 function resizeCanvasToScreen() {
   const isMobile = window.innerWidth <= 1024 || "ontouchstart" in window;
   const isLandscape = window.innerWidth > window.innerHeight;
@@ -60,7 +74,9 @@ function resizeCanvasToScreen() {
   redrawCurrentScene();
 }
 
-/** Calculates target canvas size for current viewport mode. */
+/**
+ * - Calculates target canvas size for current viewport mode.
+ */
 function calcCanvasSize(isMobile, isLandscape) {
   if (!isMobile || !isLandscape) return [CANVAS_W, CANVAS_H];
   const w = window.innerWidth;
@@ -70,13 +86,17 @@ function calcCanvasSize(isMobile, isLandscape) {
   return [w, Math.round(w / aspect)];
 }
 
-/** Redraws visible scene after a resize operation. */
+/**
+ * - Redraws visible scene after a resize operation.
+ */
 function redrawCurrentScene() {
   if (!state || !ctx) return;
   if (state.scene === "home") drawHome();
 }
 
-/** Loads persisted mute flag from local storage. */
+/**
+ * - Loads persisted mute flag from local storage.
+ */
 function loadMuteSetting() {
   state.muted = localStorage.getItem("epl-muted") === "true";
 }

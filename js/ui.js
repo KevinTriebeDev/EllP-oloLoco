@@ -1,4 +1,6 @@
-/** Binds all menu and modal button handlers. */
+/**
+ * - Binds all menu and modal button handlers.
+ */
 function bindMenu() {
   byId("startButton").addEventListener("click", startGame);
   byId("optionsButton").addEventListener("click", openOptions);
@@ -8,7 +10,9 @@ function bindMenu() {
   byId("homeButton").addEventListener("click", showHomeScreen);
 }
 
-/** Returns to home scene and redraws the start screen. */
+/**
+ * - Returns to home scene and redraws the start screen.
+ */
 function showHomeScreen() {
   state.scene = "home";
   cancelAnimationFrame(rafId);
@@ -18,23 +22,31 @@ function showHomeScreen() {
   drawHome();
 }
 
-/** Shows touch controls on small screens. */
+/**
+ * - Shows touch controls on small screens.
+ */
 function showTouchControls() {
   if (window.innerWidth <= 900)
     byId("touchControls").classList.remove("hidden");
 }
 
-/** Opens the controls modal. */
+/**
+ * - Opens the controls modal.
+ */
 function openOptions() {
   byId("optionsModal").classList.remove("hidden");
 }
 
-/** Closes the controls modal. */
+/**
+ * - Closes the controls modal.
+ */
 function closeOptions() {
   byId("optionsModal").classList.add("hidden");
 }
 
-/** Ends the game and displays the proper end screen. */
+/**
+ * - Ends the game and displays the proper end screen.
+ */
 function endGame(won) {
   state.scene = "end";
   cancelAnimationFrame(rafId);

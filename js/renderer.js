@@ -1,4 +1,6 @@
-/** Draws one full frame with all render passes. */
+/**
+ * - Draws one full frame with all render passes.
+ */
 function drawFrame() {
   drawBackgroundLayers();
   drawWorldItems();
@@ -9,7 +11,9 @@ function drawFrame() {
   drawStatusBars();
 }
 
-/** Draws all parallax background layers in order. */
+/**
+ * - Draws all parallax background layers in order.
+ */
 function drawBackgroundLayers() {
   drawLayerSet([BG.air], 0);
   drawAlternatingLayer(BG.cloud1, BG.cloud2, 0.2);
@@ -18,60 +22,67 @@ function drawBackgroundLayers() {
   drawAlternatingLayer(BG.first1, BG.first2, 1);
 }
 
-/** Draws a repeating two-image parallax layer. */
+/**
+ * - Draws a repeating two-image parallax layer.
+ */
 function drawAlternatingLayer(path1, path2, factor) {
-  const imgs = [getImage(path1), getImage(path2)].filter(
-    (i) => i.complete && i.naturalWidth,
-  );
-  if (!imgs.length) return;
-  const tileW = calcTileW(imgs[0]);
-  const parallaxX = state.cameraX * factor;
-  const start = Math.floor(parallaxX / tileW) - 1;
-  const end = Math.ceil((parallaxX + canvas.width) / tileW) + 1;
-  for (let t = start; t <= end; t++) {
-    const img = imgs[((t % imgs.length) + imgs.length) % imgs.length];
-    ctx.drawImage(
-      img,
-      Math.round(t * tileW - parallaxX),
-      0,
-      tileW,
-      canvas.height,
-    );
-  }
+  const imgs = [getImage(path1), getImage(path2)].filter(isDrawableImage);
+  drawParallaxTiles(imgs, factor);
 }
 
-/** Draws a repeating layer set using camera parallax. */
+/**
+ * - Draws a repeating layer set using camera parallax.
+ */
 function drawLayerSet(paths, factor) {
-  const imgs = paths.map(getImage).filter((i) => i.complete && i.naturalWidth);
+  const imgs = paths.map(getImage).filter(isDrawableImage);
+  drawParallaxTiles(imgs, factor);
+}
+
+/**
+ * - Returns true when an image is loaded and drawable.
+ */
+function isDrawableImage(img) {
+  return img.complete && img.naturalWidth;
+}
+
+/**
+ * - Draws tiled parallax images for one layer factor.
+ */
+function drawParallaxTiles(imgs, factor) {
   if (!imgs.length) return;
   const tileW = calcTileW(imgs[0]);
   const parallaxX = state.cameraX * factor;
   const start = Math.floor(parallaxX / tileW) - 1;
   const end = Math.ceil((parallaxX + canvas.width) / tileW) + 1;
-  for (let t = start; t <= end; t++) {
-    const img = imgs[((t % imgs.length) + imgs.length) % imgs.length];
-    ctx.drawImage(
-      img,
-      Math.round(t * tileW - parallaxX),
-      0,
-      tileW,
-      canvas.height,
-    );
-  }
+  for (let t = start; t <= end; t++) drawParallaxTile(imgs, t, tileW, parallaxX);
 }
 
-/** Calculates tile width that scales image to canvas height. */
+/**
+ * - Draws one parallax tile at a computed x position.
+ */
+function drawParallaxTile(imgs, index, tileW, parallaxX) {
+  const img = imgs[((index % imgs.length) + imgs.length) % imgs.length];
+  ctx.drawImage(img, Math.round(index * tileW - parallaxX), 0, tileW, canvas.height);
+}
+
+/**
+ * - Calculates tile width that scales image to canvas height.
+ */
 function calcTileW(img) {
   return Math.round(img.naturalWidth * (canvas.height / img.naturalHeight));
 }
 
-/** Draws collectible world items like coins and bottles. */
+/**
+ * - Draws collectible world items like coins and bottles.
+ */
 function drawWorldItems() {
   state.coins.forEach(drawCoin);
   state.bottles.forEach(drawGroundBottle);
 }
 
-/** Draws a single animated coin if not collected. */
+/**
+ * - Draws a single animated coin if not collected.
+ */
 function drawCoin(coin) {
   if (coin.taken) return;
   coin.frame += 0.15;
@@ -84,7 +95,9 @@ function drawCoin(coin) {
   ctx.drawImage(img, coin.x - state.cameraX, coin.y, coin.w, coin.h);
 }
 
-/** Draws a single ground bottle pickup if not collected. */
+/**
+ * - Draws a single ground bottle pickup if not collected.
+ */
 function drawGroundBottle(bottle) {
   if (bottle.taken) return;
   const path =
@@ -96,7 +109,9 @@ function drawGroundBottle(bottle) {
   ctx.drawImage(img, bottle.x - state.cameraX, bottle.y, bottle.w, bottle.h);
 }
 
-/** Draws all enemies with alive/dead animation frames. */
+/**
+ * - Draws all enemies with alive/dead animation frames.
+ */
 function drawEnemies() {
   state.enemies.forEach((enemy) => {
     if (enemy.hidden) return;
@@ -112,14 +127,18 @@ function drawEnemies() {
   });
 }
 
-/** Draws the boss with current mode and facing direction. */
+/**
+ * - Draws the boss with current mode and facing direction.
+ */
 function drawBoss() {
   const frames = getBossFrames();
   const faceLeft = state.boss.x < state.player.x;
   drawSprite(frames, state.boss.frame, state.boss, faceLeft);
 }
 
-/** Returns the active animation frame list for boss mode. */
+/**
+ * - Returns the active animation frame list for boss mode.
+ */
 function getBossFrames() {
   if (state.boss.mode === "dead") return ANIM.bossDead;
   if (state.boss.mode === "hurt") return ANIM.bossHurt;
@@ -127,13 +146,17 @@ function getBossFrames() {
   return ANIM.bossWalk;
 }
 
-/** Draws player sprite with current animation and direction. */
+/**
+ * - Draws player sprite with current animation and direction.
+ */
 function drawPlayer() {
   const frames = getPlayerFrames();
   drawSprite(frames, state.player.frame, state.player, state.player.dir < 0);
 }
 
-/** Selects player animation frames for current state. */
+/**
+ * - Selects player animation frames for current state.
+ */
 function getPlayerFrames() {
   const now = performance.now();
   if (now < state.player.hurtUntil) return ANIM.pepeHurt;
@@ -143,26 +166,28 @@ function getPlayerFrames() {
   return ANIM.pepeIdle;
 }
 
-/** Draws all projectiles including splash animations. */
+/**
+ * - Draws all projectiles including splash animations.
+ */
 function drawProjectiles() {
-  state.projectiles.forEach((bottle) => {
-    const x = bottle.x - state.cameraX;
-    if (bottle.splash) {
-      drawFrameAt(
-        ANIM.bottleSplash,
-        bottle.splashFrame,
-        x,
-        bottle.y,
-        bottle.w,
-        bottle.h,
-      );
-      return;
-    }
-    drawFrameAt(ANIM.bottleRot, bottle.frame, x, bottle.y, bottle.w, bottle.h);
-  });
+  state.projectiles.forEach(drawProjectile);
 }
 
-/** Draws one sprite frame and flips horizontally if needed. */
+/**
+ * - Draws one projectile in splash or flying state.
+ */
+function drawProjectile(bottle) {
+  const x = bottle.x - state.cameraX;
+  if (bottle.splash) {
+    drawFrameAt(ANIM.bottleSplash, bottle.splashFrame, x, bottle.y, bottle.w, bottle.h);
+    return;
+  }
+  drawFrameAt(ANIM.bottleRot, bottle.frame, x, bottle.y, bottle.w, bottle.h);
+}
+
+/**
+ * - Draws one sprite frame and flips horizontally if needed.
+ */
 function drawSprite(paths, frame, entity, flipX) {
   const x = entity.x - state.cameraX;
   const idx = Math.floor(frame) % paths.length;
@@ -178,13 +203,17 @@ function drawSprite(paths, frame, entity, flipX) {
   ctx.restore();
 }
 
-/** Draws one animation frame at a fixed position and size. */
+/**
+ * - Draws one animation frame at a fixed position and size.
+ */
 function drawFrameAt(paths, frame, x, y, w, h) {
   const img = getImage(paths[Math.floor(frame) % paths.length]);
   if (img.complete) ctx.drawImage(img, x, y, w, h);
 }
 
-/** Draws player and boss status bars. */
+/**
+ * - Draws player and boss status bars.
+ */
 function drawStatusBars() {
   drawStatusBar("health", state.player.hp, 16, 14);
   drawStatusBar("coin", playerCoinsPercent(), 16, 48);
@@ -192,54 +221,81 @@ function drawStatusBars() {
   if (state.boss.activated) drawBossStatusBar();
 }
 
-/** Draws one player status bar with nearest step value. */
+/**
+ * - Draws one player status bar with nearest step value.
+ */
 function drawStatusBar(kind, value, x, y) {
   const step = nearestBarValue(value);
   const img = getImage(STATUS_PATHS[kind](step));
   if (img.complete) ctx.drawImage(img, x, y, 170, 38);
 }
 
-/** Draws endboss health bar once boss is active. */
+/**
+ * - Draws endboss health bar once boss is active.
+ */
 function drawBossStatusBar() {
   const step = nearestBarValue(state.boss.hp);
   const img = getImage(STATUS_PATHS.boss(step));
   if (img.complete) ctx.drawImage(img, canvas.width - 196, 14, 170, 38);
 }
 
-/** Rounds arbitrary percentage to bar step values. */
+/**
+ * - Rounds arbitrary percentage to bar step values.
+ */
 function nearestBarValue(value) {
   return clamp(Math.round(clamp(value, 0, 100) / 20) * 20, 0, 100);
 }
 
-/** Converts collected coin count to a percentage value. */
+/**
+ * - Converts collected coin count to a percentage value.
+ */
 function playerCoinsPercent() {
   return (state.player.coins / (state.coins.length || 1)) * 100;
 }
 
-/** Draws start screen image or fallback overlay text. */
+/**
+ * - Draws start screen image or fallback overlay text.
+ */
 function drawScreenImage(path) {
   const img = getImage(path);
   if (!img.complete) {
-    if (path === SCREENS.start && !img.homeRedrawBound) {
-      img.homeRedrawBound = true;
-      img.addEventListener("load", () => {
-        if (state.scene === "home") drawHome();
-      });
-    }
-    drawLayerSet([BG.air], 0);
-    drawOverlayText("El Pollo Loco", 58);
-    drawOverlayText("Druecke Start", 98);
+    bindHomeRedrawOnLoad(path, img);
+    drawHomeFallback();
     return;
   }
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 }
 
-/** Draws the home/start screen. */
+/**
+ * - Binds home redraw callback when start image is loaded.
+ */
+function bindHomeRedrawOnLoad(path, img) {
+  if (path !== SCREENS.start || img.homeRedrawBound) return;
+  img.homeRedrawBound = true;
+  img.addEventListener("load", () => {
+    if (state.scene === "home") drawHome();
+  });
+}
+
+/**
+ * - Draws fallback background and start prompt text.
+ */
+function drawHomeFallback() {
+  drawLayerSet([BG.air], 0);
+  drawOverlayText("El Pollo Loco", 58);
+  drawOverlayText("Druecke Start", 98);
+}
+
+/**
+ * - Draws the home/start screen.
+ */
 function drawHome() {
   drawScreenImage(SCREENS.start);
 }
 
-/** Draws centered overlay text on top of the scene. */
+/**
+ * - Draws centered overlay text on top of the scene.
+ */
 function drawOverlayText(text, y) {
   ctx.fillStyle = "rgba(0,0,0,0.55)";
   ctx.fillRect(160, y - 34, 400, 44);
