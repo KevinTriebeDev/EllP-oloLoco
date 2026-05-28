@@ -16,10 +16,13 @@ backroundObjects = [
 ];
 canvas;
 ctx;
-constructor(canvas) {
+keyboard;
+constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
+    this.keyboard = keyboard;
     this.draw();
+    this.setworld();
 }
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -38,5 +41,9 @@ constructor(canvas) {
 
   addToMap(moveObject) {
     this.ctx.drawImage(moveObject.img, moveObject.x, moveObject.y, moveObject.width, moveObject.height);
+  }
+
+  setworld() {
+    this.player.world = this;
   }
 }
