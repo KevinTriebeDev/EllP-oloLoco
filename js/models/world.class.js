@@ -48,6 +48,7 @@ constructor(canvas, keyboard) {
     this.ctx.translate(this.cammera_x, 0);
     this.addObjectsToMap(this.level.backroundObjects);
     this.addObjectsToMap(this.level.clouds);
+    this.addObjectsToMap(this.level.coins);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.throwableObjects);
     this.addToMap(this.player);

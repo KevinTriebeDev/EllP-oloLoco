@@ -1,0 +1,42 @@
+Umsetzungsplan
+
+1. Coins-System aufbauen
+- Neue Klasse fuer Coins anlegen, analog zum Flaschen-Prinzip (eigene Datei, eigenes Spawn-Verhalten, eigene Bilder).
+- Coins ins Level aufnehmen und in der World mitzeichnen.
+
+2. Flaschen einsammeln und Wurf begrenzen
+- Sammelbare Flaschen im Level platzieren.
+- Kollisionslogik: Wenn Pepe Flasche beruehrt, erhoeht sich Flaschenanzahl.
+- Wurf-Logik: Flasche darf nur geworfen werden, wenn Flaschenanzahl > 0; beim Wurf wird 1 abgezogen.
+
+
+3. Coin- und Flaschen-Statusbars ergaenzen
+- Zwei zusaetzliche Statusbar-Klassen oder Instanzen einbauen: Coins und Flaschen.
+- Bei Einsammeln jeweils Prozent oder Anzeige aktualisieren.
+- UI oben fix zeichnen (wie Health-Bar). - dafür gibt es bilder im assets ordner.
+
+4. Gegner-Kollision beim Draufspringen
+- Erkennen, ob Pepe von oben auf chicken oder chickenSmall landet.
+- In diesem Fall Gegner sterben lassen statt Pepe Schaden zu geben.
+- Sterbe-Animationen fuer beide Chicken-Typen integrieren und danach Gegner entfernen oder stehen lassen (je nach gewuenschtem Verhalten).
+
+5. Chicken-Dead-Images integrieren
+- Fuer chicken_normal und chicken_small die Dead-Images laden.
+- Zustandswechsel walking -> dead korrekt abspielen.
+
+6. Game Over Screen
+- Wenn Pepes Energie 0 ist: Game-Loop stoppen oder Spielzustand auf verloren setzen.
+- Game Over Screen anzeigen.
+
+7. Win Screen
+- Siegbedingung definieren (z. B. Endboss tot).
+- Win Screen anzeigen, wenn Bedingung erfuellt ist.
+
+8. Start-Screen mit Tastenuebersicht
+- Vor Spielstart einen separaten Startscreen anzeigen.
+- Dort Steuerung erklaeren (links, rechts, springen, werfen).
+- Start per Button oder Taste.
+
+9. Integrations-Check
+- Alles zusammen testen: Einsammeln, Werfen, Kollisionen, Statusbars, Lose oder Win, Startscreen.
+- Reihenfolge der Render-Layer und Zustandswechsel pruefen.

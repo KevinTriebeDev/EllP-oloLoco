@@ -16,6 +16,16 @@ function generateRandomChickens() {
     return enemies;
 }
 
+function generateCoins() {
+    return [
+        new Coin(750, 320),
+        new Coin(1100, 280),
+        new Coin(1450, 320),
+        new Coin(1800, 260),
+        new Coin(2150, 320),
+    ];
+}
+
 const level1 = new Level(
     [
     ...generateRandomChickens(),
@@ -23,6 +33,9 @@ const level1 = new Level(
 ],
 [
     new Cloud(),
+],
+[
+    ...generateCoins(),
 ],
 [
     new BackroundObject("assets/img/5_background/layers/air.png", -720),
