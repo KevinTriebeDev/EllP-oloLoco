@@ -28,15 +28,22 @@ Umsetzungsplan
 - Wenn Pepes Energie 0 ist: Game-Loop stoppen oder Spielzustand auf verloren setzen.
 - Game Over Screen anzeigen.
 
-7. Win Screen
-- Siegbedingung definieren (z. B. Endboss tot).
-- Win Screen anzeigen, wenn Bedingung erfuellt ist.
+7. Endboss-Logik vor Win Screen
+- Endboss bewegt sich auf Pepe zu, wenn Pepe in unmittelbarer Naehe ist.
+- Endboss fuehrt Attacke aus, wenn er nah genug an Pepe ist.
+- Endboss nimmt Schaden durch geworfene Bottles und kann sterben.
+- Endboss-Statusbar erscheint rechts im Canvas erst, wenn Pepe nah genug am Endboss ist.
 
-8. Start-Screen mit Tastenuebersicht
+8. Win Screen
+- Siegbedingung: Endboss ist tot.
+- Win Screen anzeigen, wenn Bedingung erfuellt ist.
+- Auf dem Win Screen zusaetzlich Restart-Button und Home-Button anzeigen.
+
+9. Start-Screen mit Tastenuebersicht
 - Vor Spielstart einen separaten Startscreen anzeigen.
 - Dort Steuerung erklaeren (links, rechts, springen, werfen).
 - Start per Button oder Taste.
 
-9. Integrations-Check
+10. Integrations-Check
 - Alles zusammen testen: Einsammeln, Werfen, Kollisionen, Statusbars, Lose oder Win, Startscreen.
 - Reihenfolge der Render-Layer und Zustandswechsel pruefen.
