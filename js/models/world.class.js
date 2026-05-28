@@ -7,6 +7,7 @@ keyboard;
 cammera_x = 0;
 statusBar = new StatusBar();
 throwableObjects = [];
+bottleCount = 0;
 constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -21,15 +22,27 @@ constructor(canvas, keyboard) {
 
 
         this.checkCollisions();
+        this.checkBottleCollisions();
         this.checkThrowObjects();
       }, 200);
   }
 
   checkThrowObjects() {
-    if (this.keyboard.D) {
+    if (this.keyboard.D && this.bottleCount > 0) {
       let bottle = new ThrowableObject(this.player.x + 100, this.player.y + 100);
       this.throwableObjects.push(bottle);
+      this.bottleCount--;
     }
+  }
+
+  checkBottleCollisions() {
+    this.level.bottles = this.level.bottles.filter((bottle) => {
+      if (this.player.isColliding(bottle)) {
+        this.bottleCount++;
+        return false;
+      }
+      return true;
+    });
   }
 
   checkCollisions() {
@@ -49,6 +62,7 @@ constructor(canvas, keyboard) {
     this.addObjectsToMap(this.level.backroundObjects);
     this.addObjectsToMap(this.level.clouds);
     this.addObjectsToMap(this.level.coins);
+    this.addObjectsToMap(this.level.bottles);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.throwableObjects);
     this.addToMap(this.player);

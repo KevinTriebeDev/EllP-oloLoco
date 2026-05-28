@@ -18,11 +18,29 @@ function generateRandomChickens() {
 
 function generateCoins() {
     return [
-        new Coin(750, 320),
-        new Coin(1100, 280),
-        new Coin(1450, 320),
-        new Coin(1800, 260),
-        new Coin(2150, 320),
+        new Coin(450, 320),
+        new Coin(650, 280),
+        new Coin(850, 320),
+        new Coin(1050, 260),
+        new Coin(1250, 320),
+        new Coin(1450, 280),
+        new Coin(1650, 320),
+        new Coin(1850, 260),
+        new Coin(2000, 320),
+        new Coin(2120, 280),
+    ];
+}
+
+function generateBottles() {
+    return [
+        new Bottle(500, 340),
+        new Bottle(760, 340),
+        new Bottle(980, 340),
+        new Bottle(1210, 340),
+        new Bottle(1460, 340),
+        new Bottle(1710, 340),
+        new Bottle(1940, 340),
+        new Bottle(2120, 340),
     ];
 }
 
@@ -36,6 +54,9 @@ const level1 = new Level(
 ],
 [
     ...generateCoins(),
+],
+[
+    ...generateBottles(),
 ],
 [
     new BackroundObject("assets/img/5_background/layers/air.png", -720),
