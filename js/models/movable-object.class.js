@@ -1,14 +1,10 @@
-class MovableObject {
-    x = 120;
-    y = 280;
-    img;
-    height = 150;
-    width = 100;
-    imageCache = [];
+class MovableObject extends DrawableObject {
     speed = 0.15;
     otherDirection = false;
     speedY = 0;
     acceleration = 2.5;
+    energy = 100;
+    lastHit = 0;
 
     applyGravity() {
             setInterval(() => {
@@ -23,17 +19,30 @@ class MovableObject {
        return this.y < 230;
     }
 
-    loadImg(path) {
-        this.img = new Image();
-        this.img.src = path;
+    isColliding(moveObject) {
+        return this.x + this.width > moveObject.x &&
+               this.y + this.height > moveObject.y &&
+               this.x < moveObject.x + moveObject.width &&
+               this.y < moveObject.y + moveObject.height;
     }
 
-    loadImages(arr) {
-        arr.forEach((path) => {       
-            let img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
-        });
+    hit() {
+         this.energy -= 5;
+         if (this.energy < 0) {
+             this.energy = 0;
+         } else {
+             this.lastHit = new Date().getTime();
+         }
+    }
+
+    isDead() {
+        return this.energy == 0;
+    }
+
+    isHurt() {
+        let timePassed = new Date().getTime() - this.lastHit;
+        timePassed = timePassed / 1000;
+        return timePassed < 1;
     }
 
     playAnimation(images) {
