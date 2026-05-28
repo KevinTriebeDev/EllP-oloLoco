@@ -34,7 +34,7 @@ constructor(canvas, keyboard) {
 
   checkCollisions() {
           this.level.enemies.forEach((enemy) => {
-          if (this.player.isColliding(enemy)) {   
+      if (this.player.isColliding(enemy)) {   
           this.player.hit();
           this.statusBar.setPercentage(this.player.energy);
           }
