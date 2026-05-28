@@ -6,6 +6,7 @@ class MovableObject {
     width = 100;
     imageCache = [];
     speed = 0.15;
+    otherDirection = false;
     loadImg(path) {
         this.img = new Image();
         this.img.src = path;
