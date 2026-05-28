@@ -33,6 +33,7 @@ class caracter extends MovableObject {
               this.x -= this.speed; 
               this.otherDirection = true; 
             }
+            this.world.cammera_x = -this.x + 100;
         }, 1000 / 60);
 
         setInterval(() => {
