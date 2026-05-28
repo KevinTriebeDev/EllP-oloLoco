@@ -79,12 +79,27 @@ constructor(canvas, keyboard) {
   }
 
   checkCollisions() {
-          this.level.enemies.forEach((enemy) => {
-      if (this.player.isColliding(enemy)) {   
-          this.player.hit();
-          this.statusBar.setPercentage(this.player.energy);
+      this.level.enemies.forEach((enemy) => {
+        if (this.player.isColliding(enemy)) {
+          if (this.isChickenEnemy(enemy) && !enemy.isDeadEnemy && this.isPlayerStompingEnemy(enemy)) {
+            enemy.kill();
+            setTimeout(() => {
+              this.level.enemies = this.level.enemies.filter((e) => e !== enemy);
+            }, 350);
+          } else if (!enemy.isDeadEnemy) {
+            this.player.hit();
+            this.statusBar.setPercentage(this.player.energy);
           }
-       });
+        }
+      });
+    }
+
+    isChickenEnemy(enemy) {
+      return enemy instanceof chicken || enemy instanceof chickenSmall;
+    }
+
+    isPlayerStompingEnemy(enemy) {
+      return this.player.speedY < 0 && this.player.y + this.player.height <= enemy.y + 40;
     }
 
   draw() {

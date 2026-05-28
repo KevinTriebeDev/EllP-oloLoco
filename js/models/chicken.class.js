@@ -4,7 +4,9 @@ class chicken extends MovableObject {
         "assets/img/3_enemies_chicken/chicken_normal/1_walk/2_w.png",
         "assets/img/3_enemies_chicken/chicken_normal/1_walk/3_w.png",
     ];
+    DEAD_IMAGE = "assets/img/3_enemies_chicken/chicken_normal/2_dead/dead.png";
     currentImage = 0;
+    isDeadEnemy = false;
     constructor(x) {
         super();
         this.loadImg("assets/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png");
@@ -23,12 +25,21 @@ class chicken extends MovableObject {
 
     animate() {
         setInterval(() => {
-            this.x -= this.speed;
+            if (!this.isDeadEnemy) {
+                this.x -= this.speed;
+            }
         }, 1000 / 60);
         
-        setInterval(() => {               
-            this.playAnimation(this.IMAGES_WALKING);
+        setInterval(() => {
+            if (!this.isDeadEnemy) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
         }, 200);       
+    }
+
+    kill() {
+        this.isDeadEnemy = true;
+        this.loadImg(this.DEAD_IMAGE);
     }
  }
 
@@ -38,7 +49,9 @@ class chickenSmall extends MovableObject {
         "assets/img/3_enemies_chicken/chicken_small/1_walk/2_w.png",
         "assets/img/3_enemies_chicken/chicken_small/1_walk/3_w.png",
     ];
+    DEAD_IMAGE = "assets/img/3_enemies_chicken/chicken_small/2_dead/dead.png";
     currentImage = 0;
+    isDeadEnemy = false;
     constructor(x) {
         super();
         this.loadImg("assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png");
@@ -57,11 +70,20 @@ class chickenSmall extends MovableObject {
 
     animate() {
         setInterval(() => {
-            this.x -= this.speed;
+            if (!this.isDeadEnemy) {
+                this.x -= this.speed;
+            }
         }, 1000 / 60);
         
-        setInterval(() => {               
-            this.playAnimation(this.IMAGES_WALKING);
+        setInterval(() => {
+            if (!this.isDeadEnemy) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
         }, 200);       
+    }
+
+    kill() {
+        this.isDeadEnemy = true;
+        this.loadImg(this.DEAD_IMAGE);
     }
  }
