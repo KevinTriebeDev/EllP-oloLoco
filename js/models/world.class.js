@@ -22,7 +22,7 @@ constructor(canvas, keyboard) {
 
         this.checkCollisions();
         this.checkThrowObjects();
-      }, 50);
+      }, 200);
   }
 
   checkThrowObjects() {

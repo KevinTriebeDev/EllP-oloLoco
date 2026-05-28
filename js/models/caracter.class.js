@@ -40,6 +40,7 @@ class caracter extends MovableObject {
     ];
 
     world;
+    deadImageIndex = 0;
 
 
 
@@ -59,6 +60,11 @@ class caracter extends MovableObject {
     animate() {
 
         setInterval(() => {
+            if (this.isDead()) {
+                this.world.cammera_x = -this.x + 100;
+                return;
+            }
+
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
             }
@@ -76,7 +82,14 @@ class caracter extends MovableObject {
 
         setInterval(() => {
             if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
+                if (this.deadImageIndex < this.IMAGES_DEAD.length) {
+                    let path = this.IMAGES_DEAD[this.deadImageIndex];
+                    this.img = this.imageCache[path];
+                    this.deadImageIndex++;
+                } else {
+                    let lastPath = this.IMAGES_DEAD[this.IMAGES_DEAD.length - 2];
+                    this.img = this.imageCache[lastPath];
+                }
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
             } else if (this.isAboveGround()) {

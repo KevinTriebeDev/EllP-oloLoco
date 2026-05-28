@@ -1,9 +1,24 @@
+function generateRandomChickens() {
+    let count = 5 + Math.floor(Math.random() * 10);
+    let enemies = [];
+    let nextX = 900;
+
+    for (let i = 0; i < count; i++) {
+        if (Math.random() < 0.5) {
+            enemies.push(new chicken(nextX));
+        } else {
+            enemies.push(new chickenSmall(nextX));
+        }
+
+        nextX += 250 + Math.floor(Math.random() * 200);
+    }
+
+    return enemies;
+}
+
 const level1 = new Level(
     [
-    new chicken(),
-    new chicken(),
-    new chicken(),
-    new chickenSmall(),
+    ...generateRandomChickens(),
     new Endboss(),
 ],
 [
