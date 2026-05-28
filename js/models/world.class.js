@@ -8,11 +8,13 @@ cammera_x = 0;
 statusBar = new StatusBar();
 coinStatusBar = new CoinStatusBar();
 bottleStatusBar = new BottleStatusBar();
+gameOverScreen = new GameOverScreen();
 throwableObjects = [];
 bottleCount = 0;
 coinCount = 0;
 maxCoins = 0;
 maxBottles = 0;
+gameOver = false;
 constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -26,6 +28,14 @@ constructor(canvas, keyboard) {
 
   run() {
       setInterval(() => {
+        if (this.gameOver) {
+          return;
+        }
+
+        if (this.player.isDead()) {
+          this.gameOver = true;
+          return;
+        }
 
 
         this.checkCollisions();
@@ -119,6 +129,15 @@ constructor(canvas, keyboard) {
     this.addToMap(this.statusBar);
     this.addToMap(this.coinStatusBar);
     this.addToMap(this.bottleStatusBar);
+
+    if (this.gameOver) {
+      let restartButton = document.getElementById("restartButton");
+      if (restartButton) {
+        restartButton.style.display = "block";
+      }
+      this.addToMap(this.gameOverScreen);
+      return;
+    }
 
     requestAnimationFrame(() => this.draw());
   }

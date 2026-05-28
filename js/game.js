@@ -4,11 +4,19 @@ let keyboard = new Keyboard();
 
 function init() {
     canvas = document.getElementById("gameCanvas");
+    let restartButton = document.getElementById("restartButton");
+    if (restartButton) {
+        restartButton.style.display = "none";
+    }
     gameWorld = new World(canvas, keyboard);
     window.world = gameWorld;
     
 
     console.log("Game initialized", gameWorld.player);
+}
+
+function restartGame() {
+    window.location.reload();
 }
 
 window.addEventListener("keydown", (e) => {
