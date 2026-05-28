@@ -4,14 +4,30 @@ body {
   align-items: center;
 }
 
+.canvas-wrapper {
+  position: relative;
+  width: 720px;
+  height: 480px;
+}
+
 canvas {
   background-color: #000;
 }
 
 .restart-button {
-  margin-top: 12px;
-  padding: 10px 18px;
-  font-size: 18px;
+  position: absolute;
+  left: 50%;
+  top: 72%;
+  transform: translate(-50%, -50%);
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(180deg, #f4c542 0%, #d89c1f 100%);
+  border: 2px solid #fff4cc;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  text-transform: uppercase;
   cursor: pointer;
   display: none;
 }
