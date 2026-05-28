@@ -85,7 +85,7 @@ constructor(canvas, keyboard) {
             enemy.kill();
             setTimeout(() => {
               this.level.enemies = this.level.enemies.filter((e) => e !== enemy);
-            }, 350);
+              }, 700);
           } else if (!enemy.isDeadEnemy) {
             this.player.hit();
             this.statusBar.setPercentage(this.player.energy);
