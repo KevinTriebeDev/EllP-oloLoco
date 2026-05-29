@@ -5,8 +5,12 @@ let keyboard = new Keyboard();
 function init() {
     canvas = document.getElementById("gameCanvas");
     let restartButton = document.getElementById("restartButton");
+    let homeButton = document.getElementById("homeButton");
     if (restartButton) {
         restartButton.style.display = "none";
+    }
+    if (homeButton) {
+        homeButton.style.display = "none";
     }
     gameWorld = new World(canvas, keyboard);
     window.world = gameWorld;
@@ -17,6 +21,10 @@ function init() {
 
 function restartGame() {
     window.location.reload();
+}
+
+function goHome() {
+    window.location.href = "index.html";
 }
 
 window.addEventListener("keydown", (e) => {

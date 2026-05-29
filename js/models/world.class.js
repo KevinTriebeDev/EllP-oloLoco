@@ -10,12 +10,14 @@ coinStatusBar = new CoinStatusBar();
 bottleStatusBar = new BottleStatusBar();
 endbossStatusBar = new EndbossStatusBar();
 gameOverScreen = new GameOverScreen();
+winScreen = new WinScreen();
 throwableObjects = [];
 bottleCount = 0;
 coinCount = 0;
 maxCoins = 0;
 maxBottles = 0;
 gameOver = false;
+gameWon = false;
 endboss = null;
 showEndbossStatusBar = false;
 lastEndbossAttackHit = 0;
@@ -37,8 +39,17 @@ constructor(canvas, keyboard) {
           return;
         }
 
+        if (this.gameWon) {
+          return;
+        }
+
         if (this.player.isDead()) {
           this.gameOver = true;
+          return;
+        }
+
+        if (this.endboss && this.endboss.isDeadEnemy) {
+          this.gameWon = true;
           return;
         }
 
@@ -154,7 +165,11 @@ constructor(canvas, keyboard) {
     }
 
     isPlayerStompingEnemy(enemy) {
-      return this.player.speedY < 0 && this.player.y + this.player.height <= enemy.y + 40;
+      if (enemy instanceof chickenSmall) {
+        return this.player.speedY < 8 && this.player.y + this.player.height <= enemy.y + enemy.height * 1.2;
+      }
+
+      return this.player.speedY < 5 && this.player.y + this.player.height <= enemy.y + enemy.height * 0.9;
     }
 
   draw() {
@@ -180,10 +195,33 @@ constructor(canvas, keyboard) {
 
     if (this.gameOver) {
       let restartButton = document.getElementById("restartButton");
+      let homeButton = document.getElementById("homeButton");
       if (restartButton) {
         restartButton.style.display = "block";
+        restartButton.style.left = "50%";
+        restartButton.style.top = "72%";
+        restartButton.style.fontSize = "20px";
+      }
+      if (homeButton) {
+        homeButton.style.display = "none";
       }
       this.addToMap(this.gameOverScreen);
+      return;
+    }
+
+    if (this.gameWon) {
+      let restartButton = document.getElementById("restartButton");
+      let homeButton = document.getElementById("homeButton");
+      if (restartButton) {
+        restartButton.style.display = "block";
+        restartButton.style.left = "36%";
+        restartButton.style.top = "86%";
+        restartButton.style.fontSize = "18px";
+      }
+      if (homeButton) {
+        homeButton.style.display = "block";
+      }
+      this.addToMap(this.winScreen);
       return;
     }
 
