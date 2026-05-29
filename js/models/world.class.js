@@ -8,6 +8,7 @@ cammera_x = 0;
 statusBar = new StatusBar();
 coinStatusBar = new CoinStatusBar();
 bottleStatusBar = new BottleStatusBar();
+endbossStatusBar = new EndbossStatusBar();
 gameOverScreen = new GameOverScreen();
 throwableObjects = [];
 bottleCount = 0;
@@ -15,12 +16,16 @@ coinCount = 0;
 maxCoins = 0;
 maxBottles = 0;
 gameOver = false;
+endboss = null;
+showEndbossStatusBar = false;
+lastEndbossAttackHit = 0;
 constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
   this.maxCoins = this.level.coins.length;
   this.maxBottles = this.level.bottles.length;
+  this.endboss = this.level.enemies.find((enemy) => enemy instanceof Endboss);
     this.draw();
     this.setworld();
     this.run();
@@ -39,10 +44,50 @@ constructor(canvas, keyboard) {
 
 
         this.checkCollisions();
+        this.updateEndbossBehavior();
+        this.checkBottleHitsEndboss();
         this.checkCoinCollisions();
         this.checkBottleCollisions();
         this.checkThrowObjects();
       }, 200);
+  }
+
+  updateEndbossBehavior() {
+    if (!this.endboss || this.endboss.isDeadEnemy) {
+      this.showEndbossStatusBar = false;
+      return;
+    }
+
+    let distance = Math.abs(this.player.x - this.endboss.x);
+    this.showEndbossStatusBar = distance < 700;
+
+    if (distance < 120) {
+      this.endboss.startAttack();
+      if (new Date().getTime() - this.lastEndbossAttackHit > 900) {
+        this.player.hit();
+        this.statusBar.setPercentage(this.player.energy);
+        this.lastEndbossAttackHit = new Date().getTime();
+      }
+    } else if (distance < 500) {
+      this.endboss.moveToward(this.player);
+    } else {
+      this.endboss.setAlert();
+    }
+  }
+
+  checkBottleHitsEndboss() {
+    if (!this.endboss || this.endboss.isDeadEnemy) {
+      return;
+    }
+
+    this.throwableObjects = this.throwableObjects.filter((bottle) => {
+      if (bottle.isColliding(this.endboss)) {
+        this.endboss.takeDamage(20);
+        this.endbossStatusBar.setPercentage(this.endboss.energy);
+        return false;
+      }
+      return true;
+    });
   }
 
   checkThrowObjects() {
@@ -96,7 +141,7 @@ constructor(canvas, keyboard) {
             setTimeout(() => {
               this.level.enemies = this.level.enemies.filter((e) => e !== enemy);
               }, 700);
-          } else if (!enemy.isDeadEnemy) {
+          } else if (!(enemy instanceof Endboss) && !enemy.isDeadEnemy) {
             this.player.hit();
             this.statusBar.setPercentage(this.player.energy);
           }
@@ -129,6 +174,9 @@ constructor(canvas, keyboard) {
     this.addToMap(this.statusBar);
     this.addToMap(this.coinStatusBar);
     this.addToMap(this.bottleStatusBar);
+    if (this.showEndbossStatusBar) {
+      this.addToMap(this.endbossStatusBar);
+    }
 
     if (this.gameOver) {
       let restartButton = document.getElementById("restartButton");
