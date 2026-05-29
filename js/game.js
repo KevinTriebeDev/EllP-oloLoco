@@ -4,6 +4,7 @@ let keyboard = new Keyboard();
 
 function init() {
     canvas = document.getElementById("gameCanvas");
+    let fullscreenButton = document.getElementById("fullscreenButton");
     let startButton = document.getElementById("startButton");
     let guideButton = document.getElementById("guideButton");
     let guideOverlay = document.getElementById("guideOverlay");
@@ -24,6 +25,18 @@ function init() {
     if (homeButton) {
         homeButton.style.display = "none";
     }
+    document.addEventListener("fullscreenchange", () => {
+        if (!fullscreenButton) {
+            return;
+        }
+        if (document.fullscreenElement) {
+            fullscreenButton.classList.add("is-fullscreen");
+            fullscreenButton.title = "Verkleinern";
+        } else {
+            fullscreenButton.classList.remove("is-fullscreen");
+            fullscreenButton.title = "Vollbild";
+        }
+    });
     gameWorld = new World(canvas, keyboard);
     window.world = gameWorld;
     
@@ -37,6 +50,19 @@ function restartGame() {
 
 function goHome() {
     window.location.href = "index.html";
+}
+
+function toggleFullscreen() {
+    let wrapper = document.querySelector(".canvas-wrapper");
+    if (!wrapper) {
+        return;
+    }
+
+    if (!document.fullscreenElement) {
+        wrapper.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
 }
 
 function startGame() {
