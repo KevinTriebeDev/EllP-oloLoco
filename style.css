@@ -14,6 +14,79 @@ canvas {
   background-color: #000;
 }
 
+.start-button {
+  position: absolute;
+  left: 50%;
+  top: 74%;
+  transform: translate(-50%, -50%);
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(180deg, #f4c542 0%, #d89c1f 100%);
+  border: 2px solid #fff4cc;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  text-transform: uppercase;
+  cursor: pointer;
+  display: none;
+}
+
+.guide-button {
+  position: absolute;
+  left: 50%;
+  top: 86%;
+  transform: translate(-50%, -50%);
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #4d6b30;
+  border: 2px solid #c9e2a4;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  display: none;
+}
+
+.guide-panel {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  margin: 0;
+  box-sizing: border-box;
+  width: 320px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #ffffff;
+  text-align: center;
+  border: 2px solid #d89c1f;
+}
+
+.guide-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 3;
+}
+
+.guide-overlay.show {
+  display: flex;
+}
+
+.guide-panel h2 {
+  margin: 0 0 10px 0;
+}
+
+.guide-panel p {
+  margin: 6px 0;
+}
+
 .restart-button {
   position: absolute;
   left: 50%;

@@ -11,6 +11,7 @@ bottleStatusBar = new BottleStatusBar();
 endbossStatusBar = new EndbossStatusBar();
 gameOverScreen = new GameOverScreen();
 winScreen = new WinScreen();
+startScreen = new StartScreen();
 throwableObjects = [];
 bottleCount = 0;
 coinCount = 0;
@@ -18,6 +19,7 @@ maxCoins = 0;
 maxBottles = 0;
 gameOver = false;
 gameWon = false;
+gameStarted = false;
 endboss = null;
 showEndbossStatusBar = false;
 lastEndbossAttackHit = 0;
@@ -35,6 +37,10 @@ constructor(canvas, keyboard) {
 
   run() {
       setInterval(() => {
+        if (!this.gameStarted) {
+          return;
+        }
+
         if (this.gameOver) {
           return;
         }
@@ -175,6 +181,28 @@ constructor(canvas, keyboard) {
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    if (!this.gameStarted) {
+      let startButton = document.getElementById("startButton");
+      let guideButton = document.getElementById("guideButton");
+      let restartButton = document.getElementById("restartButton");
+      let homeButton = document.getElementById("homeButton");
+      if (startButton) {
+        startButton.style.display = "block";
+      }
+      if (guideButton) {
+        guideButton.style.display = "block";
+      }
+      if (restartButton) {
+        restartButton.style.display = "none";
+      }
+      if (homeButton) {
+        homeButton.style.display = "none";
+      }
+      this.addToMap(this.startScreen);
+      requestAnimationFrame(() => this.draw());
+      return;
+    }
+
     this.ctx.save();
     this.ctx.translate(this.cammera_x, 0);
     this.addObjectsToMap(this.level.backroundObjects);
@@ -258,5 +286,8 @@ constructor(canvas, keyboard) {
 
   setworld() {
     this.player.world = this;
+    this.level.enemies.forEach((enemy) => {
+      enemy.world = this;
+    });
   }
 }

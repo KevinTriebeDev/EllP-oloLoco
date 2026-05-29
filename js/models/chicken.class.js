@@ -28,13 +28,13 @@ class chicken extends MovableObject {
 
     animate() {
         setInterval(() => {
-            if (!this.isDeadEnemy) {
+            if (!this.isDeadEnemy && this.world && this.world.gameStarted) {
                 this.x -= this.speed;
             }
         }, 1000 / 60);
         
         setInterval(() => {
-            if (!this.isDeadEnemy) {
+            if (!this.isDeadEnemy && this.world && this.world.gameStarted) {
                 this.playAnimation(this.IMAGES_WALKING);
             }
         }, 200);       
@@ -76,13 +76,13 @@ class chickenSmall extends MovableObject {
 
     animate() {
         setInterval(() => {
-            if (!this.isDeadEnemy) {
+            if (!this.isDeadEnemy && this.world && this.world.gameStarted) {
                 this.x -= this.speed;
             }
         }, 1000 / 60);
         
         setInterval(() => {
-            if (!this.isDeadEnemy) {
+            if (!this.isDeadEnemy && this.world && this.world.gameStarted) {
                 this.playAnimation(this.IMAGES_WALKING);
             }
         }, 200);       

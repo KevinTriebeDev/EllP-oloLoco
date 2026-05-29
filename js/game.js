@@ -4,8 +4,20 @@ let keyboard = new Keyboard();
 
 function init() {
     canvas = document.getElementById("gameCanvas");
+    let startButton = document.getElementById("startButton");
+    let guideButton = document.getElementById("guideButton");
+    let guideOverlay = document.getElementById("guideOverlay");
     let restartButton = document.getElementById("restartButton");
     let homeButton = document.getElementById("homeButton");
+    if (startButton) {
+        startButton.style.display = "block";
+    }
+    if (guideButton) {
+        guideButton.style.display = "block";
+    }
+    if (guideOverlay) {
+        guideOverlay.classList.remove("show");
+    }
     if (restartButton) {
         restartButton.style.display = "none";
     }
@@ -25,6 +37,44 @@ function restartGame() {
 
 function goHome() {
     window.location.href = "index.html";
+}
+
+function startGame() {
+    let startButton = document.getElementById("startButton");
+    let guideButton = document.getElementById("guideButton");
+    let guideOverlay = document.getElementById("guideOverlay");
+    if (startButton) {
+        startButton.style.display = "none";
+    }
+    if (guideButton) {
+        guideButton.style.display = "none";
+    }
+    if (guideOverlay) {
+        guideOverlay.classList.remove("show");
+    }
+    if (gameWorld) {
+        gameWorld.gameStarted = true;
+    }
+}
+
+function toggleGuide() {
+    let guideOverlay = document.getElementById("guideOverlay");
+    if (!guideOverlay) {
+        return;
+    }
+
+    if (guideOverlay.classList.contains("show")) {
+        guideOverlay.classList.remove("show");
+    } else {
+        guideOverlay.classList.add("show");
+    }
+}
+
+function closeGuideOnOverlay(event) {
+    let guideOverlay = document.getElementById("guideOverlay");
+    if (guideOverlay && event.target === guideOverlay) {
+        guideOverlay.classList.remove("show");
+    }
 }
 
 window.addEventListener("keydown", (e) => {
