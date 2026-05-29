@@ -54,7 +54,7 @@ constructor() {
     this.y = 190;
     this.width = 250;
     this.height = 250;
-    this.speed = 1.2;
+    this.speed = 20;
     this.energy = 100;
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ALERT);
